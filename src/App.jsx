@@ -193,10 +193,6 @@ export default function GmailBulkDelete() {
     return [];
   };
 
-  const isTrashCategory = (label) => {
-    return label.toLowerCase() === "trash";
-  };
-
   const totalMessages = stats?.total || stats?.totalMessages || 0;
   const categories = getCategoryData();
   const deletablePercentage =
@@ -425,8 +421,8 @@ export default function GmailBulkDelete() {
                 {categories.map((cat, idx) => {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
-                  const isTrash = isTrashCategory(cat.label);
-                  console.log("Category:", cat.label, "isTrash:", isTrash);
+                  // Direct check if this is trash category
+                  const isTrashRow = cat.label === "trash";
 
                   return (
                     <div
@@ -445,7 +441,7 @@ export default function GmailBulkDelete() {
                           </div>
 
                           {/* Trash Warning Message */}
-                          {isTrash && (
+                          {isTrashRow && (
                             <div className="mt-2 bg-blue-50 border border-blue-200 rounded p-2 flex items-start gap-2">
                               <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                               <p className="text-xs text-blue-800">
