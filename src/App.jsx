@@ -421,7 +421,7 @@ export default function GmailBulkDelete() {
                 {categories.map((cat, idx) => {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
-                  // Direct check if this is trash category
+                  // Check if this is the trash category
                   const isTrashRow = cat.label === "trash";
 
                   return (
@@ -482,27 +482,27 @@ export default function GmailBulkDelete() {
                         <button
                           onClick={() => handleDelete(cat.label)}
                           disabled={
-                            isTrash ||
+                            cat.label === "trash" ||
                             isDeleting ||
                             !socket ||
                             !socket.connected
                           }
                           className={`ml-4 px-4 py-2 rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                            isTrash
-                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            cat.label === "trash"
+                              ? "bg-gray-300 text-gray-500"
                               : "bg-red-600 hover:bg-red-700 text-white"
                           }`}
                           title={
-                            isTrash
+                            cat.label === "trash"
                               ? "Use Gmail's 'Empty Trash now' button instead"
                               : ""
                           }
                         >
                           <Trash2 className="w-4 h-4" />
-                          {isDeleting
-                            ? "Deleting..."
-                            : isTrash
+                          {cat.label === "trash"
                             ? "Disabled"
+                            : isDeleting
+                            ? "Deleting..."
                             : "Delete"}
                         </button>
                       </div>
