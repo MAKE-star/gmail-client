@@ -426,6 +426,7 @@ export default function GmailBulkDelete() {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
                   const isTrash = isTrashCategory(cat.label);
+                  console.log("Category:", cat.label, "isTrash:", isTrash);
 
                   return (
                     <div
