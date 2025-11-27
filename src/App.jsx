@@ -7,6 +7,7 @@ import {
   LogOut,
   RefreshCw,
   AlertCircle,
+  Info,
 } from "lucide-react";
 import io from "socket.io-client";
 
@@ -89,7 +90,7 @@ export default function GmailBulkDelete() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Stats received:", data); // Debug log
+        console.log("Stats received:", data);
         setIsAuthenticated(true);
         setUserEmail(data.profile?.emailAddress || "Unknown");
         setStats(data.stats);
@@ -173,7 +174,6 @@ export default function GmailBulkDelete() {
   const getCategoryData = () => {
     if (!stats) return [];
 
-    // Handle different possible data structures from backend
     if (Array.isArray(stats)) {
       return stats;
     }
@@ -191,6 +191,10 @@ export default function GmailBulkDelete() {
     }
 
     return [];
+  };
+
+  const isTrashCategory = (label) => {
+    return label.toLowerCase() === "trash";
   };
 
   const totalMessages = stats?.total || stats?.totalMessages || 0;
@@ -421,6 +425,7 @@ export default function GmailBulkDelete() {
                 {categories.map((cat, idx) => {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
+                  const isTrash = isTrashCategory(cat.label);
 
                   return (
                     <div
@@ -434,9 +439,23 @@ export default function GmailBulkDelete() {
                               {cat.label}
                             </span>
                             <span className="text-sm text-gray-600">
-                              {cat.count.toLocaleString()} emails
+                              ~{cat.count.toLocaleString()} emails
                             </span>
                           </div>
+
+                          {/* Trash Warning Message */}
+                          {isTrash && (
+                            <div className="mt-2 bg-blue-50 border border-blue-200 rounded p-2 flex items-start gap-2">
+                              <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                              <p className="text-xs text-blue-800">
+                                <strong>Tip:</strong> Review your trash folder
+                                first, then use Gmail's "Empty Trash now" button
+                                for permanent deletion. Items in trash are
+                                automatically deleted after 30 days.
+                              </p>
+                            </div>
+                          )}
+
                           {isDeleting && progress && (
                             <div className="mt-2">
                               <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
@@ -465,11 +484,29 @@ export default function GmailBulkDelete() {
                         </div>
                         <button
                           onClick={() => handleDelete(cat.label)}
-                          disabled={isDeleting || !socket || !socket.connected}
-                          className="ml-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={
+                            isTrash ||
+                            isDeleting ||
+                            !socket ||
+                            !socket.connected
+                          }
+                          className={`ml-4 px-4 py-2 rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                            isTrash
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                              : "bg-red-600 hover:bg-red-700 text-white"
+                          }`}
+                          title={
+                            isTrash
+                              ? "Use Gmail's 'Empty Trash now' button instead"
+                              : ""
+                          }
                         >
                           <Trash2 className="w-4 h-4" />
-                          {isDeleting ? "Deleting..." : "Delete"}
+                          {isDeleting
+                            ? "Deleting..."
+                            : isTrash
+                            ? "Disabled"
+                            : "Delete"}
                         </button>
                       </div>
                     </div>
