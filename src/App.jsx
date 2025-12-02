@@ -22,6 +22,7 @@ export default function GmailBulkDelete() {
   const [socket, setSocket] = useState(null);
   const [deleteProgress, setDeleteProgress] = useState({});
   const [activeDeletes, setActiveDeletes] = useState(new Set());
+  const [userCount, setUserCount] = useState(0);
 
   // Check for authentication on mount
   useEffect(() => {
@@ -105,6 +106,22 @@ export default function GmailBulkDelete() {
       setLoading(false);
     }
   };
+
+  const loadUserCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user-count`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserCount(data.count);
+      }
+    } catch (error) {
+      console.error("Failed to load user count:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadUserCount();
+  }, []);
 
   const loadStats = async () => {
     setLoading(true);
@@ -516,6 +533,25 @@ export default function GmailBulkDelete() {
               No data available. Click refresh to load stats.
             </div>
           )}
+        </div>
+        <div className="mt-6 bg-white rounded-lg shadow-lg p-4">
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+            <svg
+              className="w-5 h-5 text-indigo-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+            </svg>
+            <span>
+              <strong className="text-indigo-600">
+                {userCount.toLocaleString()}
+              </strong>
+              <span className="ml-1">
+                {userCount === 1 ? "user has" : "users have"} used this app
+              </span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
