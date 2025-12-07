@@ -445,7 +445,8 @@ export default function GmailBulkDelete() {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
                   // Check if this is the trash category
-                  const isTrashRow = cat.label === "trash";
+                  const normalizedLabel = cat.label?.toLowerCase();
+                  const isTrashRow = normalizedLabel === "trash";
 
                   return (
                     <div
@@ -505,7 +506,7 @@ export default function GmailBulkDelete() {
                         <button
                           onClick={() => handleDelete(cat.label, cat.count)}
                           disabled={
-                            cat.label === "trash" ||
+                            isTrashRow ||
                             isDeleting ||
                             !socket ||
                             !socket.connected
