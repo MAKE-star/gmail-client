@@ -145,22 +145,28 @@ export default function GmailBulkDelete() {
     window.location.href = `${API_BASE_URL}/auth/gmail`;
   };
 
-  const handleDelete = async (category) => {
+  const handleDelete = async (category, count) => {
     if (!socket || !socket.connected) {
       alert("Socket not connected. Please refresh the page.");
       return;
     }
 
-    if (activeDeletes.has(category)) {
-      alert("Delete already in progress for this category");
+    // HARD BLOCK TRASH
+    if (category.toLowerCase() === "trash") {
+      alert("Trash cannot be deleted. Use Gmail’s 'Empty Trash' button instead.");
       return;
     }
 
     if (
       !confirm(
-        `Are you sure you want to delete all emails in category: ${category}?\n\nThis will move them to trash.`
+        `Are you sure you want to delete all ~${count} emails in category: ${category}?`
       )
     ) {
+      return;
+    }
+
+    if (activeDeletes.has(category)) {
+      alert("Delete already in progress for this category");
       return;
     }
 
@@ -497,7 +503,7 @@ export default function GmailBulkDelete() {
                           )}
                         </div>
                         <button
-                          onClick={() => handleDelete(cat.label)}
+                          onClick={() => handleDelete(cat.label, cat.count)}
                           disabled={
                             cat.label === "trash" ||
                             isDeleting ||
