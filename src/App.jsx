@@ -91,7 +91,7 @@ export default function GmailBulkDelete() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Stats received:", data);
+        // console.log("Stats received:", data);
         setIsAuthenticated(true);
         setUserEmail(data.profile?.emailAddress || "Unknown");
         setStats(data.stats);
