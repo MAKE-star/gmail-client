@@ -446,6 +446,7 @@ export default function GmailBulkDelete() {
                   const progress = deleteProgress[cat.label];
                   // Check if this is the trash category
                   const isTrashCategory = cat.label.toLowerCase() === "trash";
+                  console.log(`Category: "${cat.label}", lowercase: "${cat.label.toLowerCase()}", isTrash: ${isTrashCategory}`);
 
                   return (
                     <div
