@@ -445,8 +445,7 @@ export default function GmailBulkDelete() {
                   const isDeleting = activeDeletes.has(cat.label);
                   const progress = deleteProgress[cat.label];
                   // Check if this is the trash category
-                  const normalizedLabel = cat.label?.toLowerCase();
-                  const isTrashRow = normalizedLabel === "trash";
+                  const isTrashCategory = cat.label.toLowerCase() === "trash";
 
                   return (
                     <div
@@ -465,7 +464,7 @@ export default function GmailBulkDelete() {
                           </div>
 
                           {/* Trash Warning Message */}
-                          {isTrashRow && (
+                          {isTrashCategory && (
                             <div className="mt-2 bg-blue-50 border border-blue-200 rounded p-2 flex items-start gap-2">
                               <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                               <p className="text-xs text-blue-800">
@@ -503,32 +502,32 @@ export default function GmailBulkDelete() {
                             </div>
                           )}
                         </div>
-                        <button
-                          onClick={() => handleDelete(cat.label, cat.count)}
-                          disabled={
-                            isTrashRow ||
-                            isDeleting ||
-                            !socket ||
-                            !socket.connected
-                          }
-                          className={`ml-4 px-4 py-2 rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                            cat.label === "trash"
-                              ? "bg-gray-300 text-gray-500"
-                              : "bg-red-600 hover:bg-red-700 text-white"
-                          }`}
-                          title={
-                            cat.label === "trash"
-                              ? "Use Gmail's 'Empty Trash now' button instead"
-                              : ""
-                          }
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          {cat.label === "trash"
-                            ? "Disabled"
-                            : isDeleting
-                            ? "Deleting..."
-                            : "Delete"}
-                        </button>
+                       <button
+                        onClick={() => handleDelete(cat.label, cat.count)}
+                        disabled={
+                          isTrashCategory ||
+                          isDeleting ||
+                          !socket ||
+                          !socket.connected
+                        }
+                        className={`ml-4 px-4 py-2 rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          isTrashCategory
+                            ? "bg-gray-300 text-gray-500"
+                            : "bg-red-600 hover:bg-red-700 text-white"
+                        }`}
+                        title={
+                          isTrashCategory
+                            ? "Use Gmail's 'Empty Trash now' button instead"
+                            : ""
+                        }
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        {isTrashCategory
+                          ? "Disabled"
+                          : isDeleting
+                          ? "Deleting..."
+                          : "Delete"}
+                      </button>
                       </div>
                     </div>
                   );
